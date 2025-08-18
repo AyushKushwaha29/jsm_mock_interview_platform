@@ -1,0 +1,52 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable @next/next/no-img-element */
+import { getRandomInterviewCover } from '@/lib/utils';
+import dayjs from 'dayjs'
+import DisplayTechIcons from './DisplayTechIcons';
+
+const InterviewCard = ({interviewID, role, type, techstack, createdAt}: InterviewCardProps) => {
+    const feedback = null as Feedback | null;
+    const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
+    const formattedDate = dayjs(feedback?.createdAt|| createdAt || Date.now()).format('MMM D, YYYY');
+    // function getRandomInterviewCover(): string | Blob | undefined {
+    //     throw new Error('Function not implemented.');
+    // }
+
+    return (
+    <div className='card-border w-[360px] max-sm:w-full min-h-96'>
+        <div className='card-interview'>
+            <div>
+                <div className='absolute top-0 right-0 w-fit px-4 py-2 rounded-bl-lg bg-light-600'>
+                   <p className='badge-interview'>{normalizedType}</p>
+                </div>
+                <img src={getRandomInterviewCover()} alt='cover-Image' width={90} height={90} className='rounder-full object-fit size-[90px]'/>
+                <h3 className='mt-5 capitalize'>
+                    {role} Interview
+                </h3>
+                <div className='flex flex-row gap-5 mt-3'>
+                    <div className='flex flex-row gap-2'>
+                    <img src="/calendar.svg" alt='calendar' width={22} height={22}/>
+                    <p>{formattedDate}</p>
+                    </div>
+                    <div className='flex flex-row gap- items-center'>
+                        <img src="/star.svg" alt='star' width={22} height={22} />
+                        <p>{feedback?.totalScore || '---'}/100</p>
+                    </div>
+                </div>
+                <p className='line-clamp-2 mt-5'>{feedback?.finalAssessment || "You haven't taken the interview yet.Take it now improve your skills."}</p>
+            </div>
+            <div className='flex flex-row justify-between'>
+                <DisplayTechIcons techStack={techstack}/>
+                <button className='btn-primary'>
+                    <a href={feedback
+                        ? `/interview/${interviewID}/feedback`:`/interview/${interviewID}`
+                    }>{feedback ? 'Check Feedback' : 'View Interview'}</a>
+                </button>
+            </div>
+        </div>
+    </div>
+  )
+}
+
+export default InterviewCard
