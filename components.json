@@ -17,5 +17,252 @@
     "lib": "@/lib",
     "hooks": "@/hooks"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+
+
+
+  "name": "interview_prep",
+  "nodes": [
+    {
+      "name": "introduction",
+      "type": "conversation",
+      "isStart": true,
+      "metadata": {
+        "position": {
+          "x": -425.78209387548605,
+          "y": -453.22084347412925
+        }
+      },
+      "prompt": "Let's prepare your interview. I'll ask you a few question and generate a perfect interview just for you. Are you ready?",
+      "messagePlan": {
+        "firstMessage": "Hey, {{username}} "
+      },
+      "toolIds": []
+    },
+    {
+      "name": "role",
+      "type": "conversation",
+      "isStart": false,
+      "metadata": {
+        "position": {
+          "x": -777.0656373062582,
+          "y": -149.39826000698446
+        }
+      },
+      "prompt": "What {{role}} would you like to train for ? ",
+      "messagePlan": {
+        "firstMessage": ""
+      },
+      "toolIds": []
+    },
+    {
+      "name": "type",
+      "type": "conversation",
+      "isStart": false,
+      "metadata": {
+        "position": {
+          "x": -79.09749045494321,
+          "y": -89.5958610571185
+        }
+      },
+      "prompt": "Are you aiming for a technical, behavioral or mixed interview ? {{type}}",
+      "messagePlan": {
+        "firstMessage": ""
+      },
+      "toolIds": []
+    },
+    {
+      "name": "level",
+      "type": "conversation",
+      "isStart": false,
+      "metadata": {
+        "position": {
+          "x": -778.0248113263573,
+          "y": 122.2037168635668
+        }
+      },
+      "prompt": "{{level}}",
+      "messagePlan": {
+        "firstMessage": "The job level experience level"
+      },
+      "toolIds": []
+    },
+    {
+      "name": "techstack",
+      "type": "conversation",
+      "isStart": false,
+      "metadata": {
+        "position": {
+          "x": -73.80462054152996,
+          "y": 213.41049163384997
+        }
+      },
+      "prompt": "{{ltechstack}}",
+      "messagePlan": {
+        "firstMessage": "A list of technologies to covver during the job interview"
+      },
+      "toolIds": []
+    },
+    {
+      "name": "amount",
+      "type": "conversation",
+      "isStart": false,
+      "metadata": {
+        "position": {
+          "x": -775.8247027321921,
+          "y": 408.98801438195994
+        }
+      },
+      "prompt": "{{amount}}",
+      "messagePlan": {
+        "firstMessage": "How many question would you like me to prepare for you ? "
+      },
+      "toolIds": []
+    },
+    {
+      "name": "apiRequest_1755573577047",
+      "type": "tool",
+      "metadata": {
+        "position": {
+          "x": -73.5376877569491,
+          "y": 521.8550469607586
+        }
+      },
+      "tool": {
+        "url": "https://jsm-mock-interview-platform-silk.vercel.app/api/vapi/generate",
+        "body": {
+          "type": "object",
+          "required": [
+            "role",
+            "type",
+            "level",
+            "amount",
+            "userid",
+            "techstack"
+          ],
+          "properties": {
+            "role": {
+              "type": "string",
+              "default": "{{role}}",
+              "description": ""
+            },
+            "type": {
+              "type": "string",
+              "default": "{{type}}",
+              "description": ""
+            },
+            "level": {
+              "type": "string",
+              "default": "{{level}}",
+              "description": ""
+            },
+            "amount": {
+              "type": "string",
+              "default": "{{amount1}}",
+              "description": ""
+            },
+            "userid": {
+              "type": "string",
+              "default": "{{ userid }}",
+              "description": ""
+            },
+            "techstack": {
+              "type": "string",
+              "default": "{{ techstack }}",
+              "description": ""
+            }
+          }
+        },
+        "name": "Interview_PrepWise",
+        "type": "apiRequest",
+        "method": "POST",
+        "function": {
+          "name": "api_request_tool",
+          "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "description": "API request tool"
+        },
+        "messages": [
+          {
+            "type": "request-start",
+            "blocking": false
+          }
+        ],
+        "variableExtractionPlan": {
+          "schema": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+          },
+          "aliases": []
+        }
+      }
+    },
+    {
+      "name": "say",
+      "type": "conversation",
+      "metadata": {
+        "position": {
+          "x": -775.8098415068955,
+          "y": 711.3437070760571
+        }
+      },
+      "prompt": "",
+      "messagePlan": {
+        "firstMessage": "Say that the interview has been generated and thank you for the call"
+      },
+      "toolIds": []
+    },
+    {
+      "name": "hangup_1755574201129",
+      "type": "tool",
+      "metadata": {
+        "position": {
+          "x": -63.92203391441508,
+          "y": 809.0263644798721
+        }
+      },
+      "tool": {
+        "type": "endCall"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "introduction",
+      "to": "role"
+    },
+    {
+      "from": "role",
+      "to": "type"
+    },
+    {
+      "from": "type",
+      "to": "level"
+    },
+    {
+      "from": "level",
+      "to": "techstack"
+    },
+    {
+      "from": "techstack",
+      "to": "amount"
+    },
+    {
+      "from": "amount",
+      "to": "apiRequest_1755573577047"
+    },
+    {
+      "from": "apiRequest_1755573577047",
+      "to": "say"
+    },
+    {
+      "from": "say",
+      "to": "hangup_1755574201129"
+    }
+  ],
+  "globalPrompt": ""
 }

@@ -1,47 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */ 
 'use server';
 
 import { db, auth } from "@/firebase/admin";
 import { cookies } from "next/headers";
-
-// export default async function SignUp(params:SignInParams) {
-//     const {uid, name, email} = params;
-//     try{
-//        const userRecode = await db.collection('user').doc(uid).get();
-//        if(userRecode.exists){
-//         return{
-//         success: false,
-//         message: 'User already exists. Please sign in instead'
-//        }
-//     }
-//     await db.collection('users').doc(uid).set({
-//         name, email
-//     })
-//     return{
-//         success: true,
-//         message: 'Account created successfully. please sign in.'
-//     }
-
-
-
-//     }catch(e:any){
-//         // console.error('Error creating a user', e);
-//         if(e.code === 'auth/email-already-exists'){
-//           return{
-//             success:false,
-//             message:'This email is already in use.'
-//           }
-//         }
-//         return {
-//             success:false,
-//             message: 'Failed to create an account'
-
-//         }
-//     }
-// }
-
 
 interface SignUpParams {
   uid: string
@@ -49,6 +10,8 @@ interface SignUpParams {
   email: string
   password: string
 }
+
+const ONE_WEEK = 60*60*24*7;
 
 export async function SignUp(params: SignUpParams) {
   const { uid, name, email } = params;
@@ -89,11 +52,6 @@ export async function SignUp(params: SignUpParams) {
     };
   }
 }
-
-
-
-
-const ONE_WEEK = 60*60*24*7;
 
 export async function SignIn(params:SignInParams) {
     const {email,idToken} = params;
@@ -155,4 +113,42 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function isAuthenticated() {
   const user = await getCurrentUser();
   return !!user;
+}
+
+export async function getInterviewsByUserId(userId: string): Promise<Interview[] | null> {
+  try {
+    const snapshot = await db
+      .collection("interviews")
+      .where("userId", "==", userId)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    if (snapshot.empty) return null;
+
+    const interviews = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Interview[];
+
+    return interviews;
+  } catch (error) {
+    console.error("Error fetching interviews:", error);
+    return null;
+  }
+}
+
+export async function getLatestInterviews({ userId, limit = 10 }: GetLatestInterviewsParams): Promise<Interview[]> {
+  const interviews = await db
+    .collection('interviews')
+    .where('finalized', '==', true)
+    .where('userId', '!=', userId) // ✅ Firestore supports '!=' (not '!==')
+    .orderBy('userId')             // ✅ required when using '!='
+    .orderBy('createdAt', 'desc')  // then order by createdAt
+    .limit(limit)
+    .get();
+
+  return interviews.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Interview[]; 
 }
