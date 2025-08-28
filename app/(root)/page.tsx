@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 import { getCurrentUser } from "@/lib/actions/auth.action";
+import { startAssistant } from "@/lib/vapi.sdk";
 // import {
 //   getInterviewsByUserId,
 //   getLatestInterviews,
@@ -32,7 +33,7 @@ async function Home() {
             Practice real interview questions & get instant feedback
           </p>
 
-          <Button asChild className="btn-primary max-sm:w-full">
+          <Button onClick={() => startAssistant()} asChild className="btn-primary max-sm:w-full">
             <Link href="/interview">Start an Interview</Link>
           </Button>
         </div>
